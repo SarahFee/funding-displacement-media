@@ -63,8 +63,8 @@ humanitarian-funding-analysis/
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/humanitarian-funding-analysis.git
-cd humanitarian-funding-analysis
+git clone https://github.com/SarahFee/funding-displacement-media.git
+cd funding-displacement-media
 
 # Create virtual environment
 python -m venv venv
@@ -127,12 +127,12 @@ For detailed findings, see the [Quarto documentation](docs/).
 If you use this analysis in your research, please cite:
 
 ```bibtex
-@misc{fekih2025humanitarian,
+@misc{fekih2025aiddata,
   author = {Fekih, Sarah},
-  title = {Humanitarian Funding Analysis: Examining the Data-Action Gap},
+  title = {When Aid Ignores Its Own Data},
   year = {2025},
   publisher = {GitHub},
-  url = {https://github.com/yourusername/humanitarian-funding-analysis}
+  url = {https://github.com/SarahFee/funding-displacement-media}
 }
 ```
 
@@ -155,7 +155,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 Sarah Fekih
 
-Project Link: [https://github.com/SarahFee/funding-displacement](https://github.com/SarahFee/funding-displacement)
+Project Link: [https://github.com/SarahFee/funding-displacement-media](https://github.com/SarahFee/funding-displacement-media)
 Blog Post: [When Aid Ignores Its Own Data](https://medium.com/@fekih.sarah/when-aid-ignores-its-own-data-f412eaf04633) - Medium article discussing the findings and implications
 
 ---
