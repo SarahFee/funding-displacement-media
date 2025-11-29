@@ -1,3 +1,7 @@
+# Project Overview
+This repository contains the analytical pipeline and methodology for investigating whether humanitarian funding follows actual displacement needs or is driven by media visibility patterns.
+It is the sript behind the Medium's blog Post: [When Aid Funding Ignores the Data It Pays For](https://medium.com/@fekih.sarah/when-aid-ignores-its-own-data-f412eaf04633)
+
 # Quick Start Guide
 
 ##  Getting Started in 5 Minutes
