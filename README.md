@@ -4,8 +4,6 @@ It is the sript behind the Medium's blog Post: [When Aid Funding Ignores the Dat
 
 # Quick Start Guide
 
-##  Getting Started in 5 Minutes
-
 ### Step 1: Run Setup
 
 ```bash
