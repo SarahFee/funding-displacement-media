@@ -1,163 +1,130 @@
-# Funding, displacement and media analysis Pipeline
+# Quick Start Guide
 
-[![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+##  Getting Started in 5 Minutes
 
-A data-driven analysis examining the relationship between humanitarian funding flows, displacement patterns, and media coverage (2022-2024).
-
-## Project Overview
-
-This repository contains the analytical pipeline and methodology for investigating whether humanitarian funding follows actual displacement needs or is driven by media visibility patterns.
-
-**Key Research Questions:**
-- Does humanitarian funding correlate with displacement trends?
-- How does media coverage influence funding allocation?
-- Can we identify the "visibility bias" in humanitarian response?
-
-## Datasets
-
-### 1. FTS (Financial Tracking Service)
-- **Source**: [OCHA FTS API](https://fts.unocha.org/)
-- **Content**: Global humanitarian funding flows
-- **Coverage**: 2022-2024
-- **Granularity**: Daily transaction-level data
-
-### 2. DTM (Displacement Tracking Matrix)
-- **Source**: [IOM DTM API](https://dtm.iom.int/)
-- **Content**: Internal displacement data
-- **Coverage**: 44 countries
-- **Granularity**: Quarterly aggregated reporting
-
-### 3. GDELT (Global Database of Events, Language, and Tone)
-- **Source**: [GDELT Project](https://www.gdeltproject.org/)
-- **Content**: Media coverage volume and sentiment
-- **Coverage**: Global news articles
-- **Granularity**: Daily time-series data
-
-## Repository Structure
-
-```
-humanitarian-funding-analysis/
-├── data/                      # Data storage (gitignored)
-│   ├── raw/                   # Raw API responses
-│   ├── processed/             # Cleaned and transformed data
-│   └── outputs/               # Generated visualizations
-├── src/                       # Source code
-│   ├── data_acquisition/      # API clients and data fetchers
-│   ├── processing/            # Data transformation pipelines
-│   ├── modeling/              # Prophet models and forecasting
-│   └── visualization/         # Plotting functions
-├── notebooks/                 # Analysis notebooks
-├── docs/                      # Quarto documentation
-├── tests/                     # Unit tests
-└── requirements.txt           # Python dependencies
-```
-
-## Quick Start
-
-### Prerequisites
-- Python 3.8+
-- pip or conda
-
-### Installation
+### Step 1: Run Setup
 
 ```bash
-# Clone the repository
-git clone https://github.com/SarahFee/funding-displacement-media.git
-cd funding-displacement-media
+# Make setup script executable (if not already)
+chmod +x setup.sh
 
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
+# Run setup
+./setup.sh
 ```
 
-### Running the Analysis
+This will:
+- Create a virtual environment
+- Install all dependencies
+- Create directory structure
+
+### Step 2: Run the Analysis
 
 ```bash
-# Run the complete pipeline
+# Activate virtual environment (if not already active)
+source venv/bin/activate
+
+# Run the pipeline
 python src/main.py
-
-# Or run specific components
-python src/data_acquisition/fetch_fts.py
-python src/data_acquisition/fetch_dtm.py
-python src/data_acquisition/fetch_gdelt.py
 ```
 
-### Generating Documentation
+The pipeline will:
+1. Fetch data from FTS, DTM, and GDELT APIs
+2. Process and normalize the data
+3. Calculate correlations
+4. Generate visualizations
+5. Save results to `data/outputs/`
+
+## View Results
+
+After running the analysis, check:
+
+- **Visualizations**: `data/outputs/*.png`
+- **Correlation Results**: `data/outputs/correlation_results.csv`
+- **Detailed Report**: `data/outputs/correlation_report.txt`
+
+
+## Customize the Analysis
+
+### Change Date Range
+
+Edit `src/main.py`:
+
+```python
+START_DATE = "2020-01-01"  # Your start date
+END_DATE = "2023-12-31"    # Your end date
+```
+
+### Change GDELT Keyword
+
+```python
+GDELT_KEYWORD = "Refugee Crisis"  # Or "Humanitarian Crisis", etc.
+```
+
+### Add Countries to DTM Analysis
+
+```python
+COUNTRY_LIST = [
+    "LBY", "AFG", "SYR",  # Add more ISO3 codes
+    # ...
+]
+```
+
+## Troubleshooting
+
+### Missing Dependencies
 
 ```bash
-# Install Quarto: https://quarto.org/docs/get-started/
-quarto render docs/
+pip install --upgrade -r requirements.txt
 ```
 
-## Methodology
+### Prophet Installation Issues
 
-### Data Pipeline
+Prophet requires specific C++ compilers. If installation fails:
 
-1. **Data Acquisition**: Fetching from three independent APIs
-2. **Temporal Alignment**: Normalizing to common date ranges (Feb 2022 - Feb 2024)
-3. **Time Series Modeling**: Prophet for funding forecasting with quarterly seasonality
-4. **Normalization**: MinMaxScaler for cross-series comparison
-5. **Aggregation**: Quarterly resolution for trend analysis
-6. **Correlation Analysis**: Pearson coefficients with significance testing
+```bash
+# On macOS
+brew install cmake
 
-### Statistical Approach
+# On Ubuntu/Debian
+sudo apt-get install python3-dev
 
-- **Funding Data**: Log-transformed to stabilize variance, modeled with Prophet
-- **Displacement Data**: Quarterly aggregation across 44 countries
-- **Media Data**: Volume and tone metrics, quarterly averaged
-- **Normalization**: All series scaled to [0,1] for visual comparison
-- **Correlation**: Pearson correlation with p-value significance testing
-
-## Key Findings
-
-The analysis reveals:
-- Funding shows stronger correlation with media patterns than displacement trends
-- Media coverage volume and tone significantly influence funding allocation
-- High-profile crises receive disproportionate funding compared to displacement severity
-- Funding decisions lag behind media attention peaks
-
-For detailed findings, see the [Quarto documentation](docs/).
-
-## Citation
-
-If you use this analysis in your research, please cite:
-
-```bibtex
-@misc{fekih2025aiddata,
-  author = {Fekih, Sarah},
-  title = {When Aid Ignores Its Own Data},
-  year = {2025},
-  publisher = {GitHub},
-  url = {https://github.com/SarahFee/funding-displacement-media}
-}
+# Then reinstall
+pip install prophet
 ```
+
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+See `CONTRIBUTING.md` for guidelines on:
+- Code style
+- Testing
+- Pull requests
+- Areas for contribution
 
-## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## Common Tasks
 
-## Acknowledgments
+### Just want to see the analysis?
 
-- **OCHA** for maintaining the FTS API
-- **IOM** for the DTM data infrastructure
-- **GDELT Project** for comprehensive media monitoring
-- **Prophet** team at Meta for the forecasting library
+```bash
+# View the original notebook
+jupyter notebook notebooks/analysis_example.ipynb
+```
 
-## Contact
+### Want to test individual components?
 
-Sarah Fekih
+```python
+# Test FTS fetcher
+python src/data_acquisition/fetch_fts.py
 
-Project Link: [https://github.com/SarahFee/funding-displacement-media](https://github.com/SarahFee/funding-displacement-media)
-Blog Post: [When Aid Ignores Its Own Data](https://medium.com/@fekih.sarah/when-aid-ignores-its-own-data-f412eaf04633) - Medium article discussing the findings and implications
+# Test displacement processor
+python src/processing/process_displacement.py
+```
 
----
+### Want to modify visualizations?
 
-**Note**: This is a research project. Findings should be interpreted within the context of the methodology and limitations described in the documentation.
+Edit `src/visualization/plots.py` and customize:
+- Colors
+- Figure sizes
+- Plot types
+- Labels and titles
