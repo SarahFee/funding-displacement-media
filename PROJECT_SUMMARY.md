@@ -1,219 +1,130 @@
-# Project Summary: Funding, displacement, media Pipeline
+# Funding, displacement and media analysis Pipeline
 
-## Overview
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-This repository contains a complete analytical pipeline examining the relationship between humanitarian funding flows, displacement patterns, and media coverage from 2022-2024. The project is designed for reproducibility, modularity, and extensibility.
+A data-driven analysis examining the relationship between humanitarian funding flows, displacement patterns, and media coverage (2022-2024).
 
-## Key Components
+## Project Overview
 
-### 1. Data Acquisition (`src/data_acquisition/`)
+This repository contains the analytical pipeline and methodology for investigating whether humanitarian funding follows actual displacement needs or is driven by media visibility patterns.
 
-Three independent API clients:
+**Key Research Questions:**
+- Does humanitarian funding correlate with displacement trends?
+- How does media coverage influence funding allocation?
+- Can we identify the "visibility bias" in humanitarian response?
 
-- **FTS Client** (`fetch_fts.py`): Fetches funding data from OCHA's Financial Tracking Service
-- **DTM Client** (`fetch_dtm.py`): Fetches displacement data from IOM's Displacement Tracking Matrix
-- **GDELT Client** (`fetch_gdelt.py`): Fetches media coverage and sentiment from GDELT Project
+## Datasets
 
-All clients include:
-- Error handling and logging
-- Rate limiting where appropriate
-- Raw data caching
-- Retry mechanisms
+### 1. FTS (Financial Tracking Service)
+- **Source**: [OCHA FTS API](https://fts.unocha.org/)
+- **Content**: Global humanitarian funding flows
+- **Coverage**: 2022-2024
+- **Granularity**: Daily transaction-level data
 
-### 2. Data Processing (`src/processing/`)
+### 2. DTM (Displacement Tracking Matrix)
+- **Source**: [IOM DTM API](https://dtm.iom.int/)
+- **Content**: Internal displacement data
+- **Coverage**: 44 countries
+- **Granularity**: Quarterly aggregated reporting
 
-Modular processing pipelines:
+### 3. GDELT (Global Database of Events, Language, and Tone)
+- **Source**: [GDELT Project](https://www.gdeltproject.org/)
+- **Content**: Media coverage volume and sentiment
+- **Coverage**: Global news articles
+- **Granularity**: Daily time-series data
 
-- **Funding Processor** (`process_funding.py`): 
-  - Prophet time series modeling
-  - Quarterly seasonality extraction
-  - Log transformation for variance stabilization
-  - MinMaxScaler normalization
-
-- **Displacement Processor** (`process_displacement.py`):
-  - Quarterly aggregation across 44 countries
-  - Date parsing and filtering
-  - Normalization to [0,1] range
-
-- **GDELT Processor** (`process_gdelt.py`):
-  - Volume and tone data handling
-  - Quarterly averaging
-  - Normalization
-
-### 3. Statistical Analysis (`src/modeling/`)
-
-- **Correlation Analysis** (`correlation_analysis.py`):
-  - Pearson correlation calculation
-  - P-value significance testing
-  - Temporal alignment of datasets
-  - Results export (CSV and TXT reports)
-
-### 4. Visualization (`src/visualization/`)
-
-Publication-quality plots:
-
-- Funding vs. Displacement trends
-- Funding vs. Media Volume
-- Displacement vs. Media Coverage
-- Funding vs. Media Sentiment
-
-All visualizations:
-- 300 DPI resolution
-- Professional color schemes
-- Normalized [0,1] scales for comparison
-- Saved as PNG
-
-### 5. Pipeline Orchestration (`src/main.py`)
-
-Complete end-to-end pipeline:
-1. Data acquisition from all sources
-2. Processing and transformation
-3. Correlation analysis
-4. Visualization generation
-5. Results summary logging
-
-## Documentation
-
-### Quarto Website (`docs/`)
-
-Three comprehensive documents:
-
-1. **Index** (`index.qmd`): 
-   - Project overview
-   - Key findings
-   - Quick start guide
-   - Research context
-
-2. **Methodology** (`methodology.qmd`):
-   - Detailed data sources
-   - Processing steps explained
-   - Statistical methods
-   - Limitations and assumptions
-   - Reproducibility instructions
-
-3. **API Reference** (`api_reference.qmd`):
-   - Function documentation
-   - Parameter descriptions
-   - Code examples
-   - Configuration options
-
-### Notebooks (`notebooks/`)
-
-- Original Jupyter notebook preserved
-- Example analysis workflow
-- Interactive exploration
-
-## File Structure
+## Repository Structure
 
 ```
 humanitarian-funding-analysis/
-├── README.md                    # Project overview
-├── LICENSE                      # MIT License
-├── CONTRIBUTING.md              # Contribution guidelines
-├── requirements.txt             # Python dependencies
-├── setup.sh                     # Setup script
-├── .gitignore                   # Git ignore rules
-├── .github/
-│   └── workflows/
-│       └── deploy-docs.yml      # GitHub Pages deployment
-├── data/
-│   ├── raw/                     # Raw API responses (gitignored)
-│   ├── processed/               # Processed data (gitignored)
-│   └── outputs/                 # Visualizations (gitignored)
-├── src/
-│   ├── main.py                  # Pipeline orchestrator
-│   ├── data_acquisition/
-│   │   ├── __init__.py
-│   │   ├── fetch_fts.py
-│   │   ├── fetch_dtm.py
-│   │   └── fetch_gdelt.py
-│   ├── processing/
-│   │   ├── __init__.py
-│   │   ├── process_funding.py
-│   │   ├── process_displacement.py
-│   │   └── process_gdelt.py
-│   ├── modeling/
-│   │   ├── __init__.py
-│   │   └── correlation_analysis.py
-│   └── visualization/
-│       ├── __init__.py
-│       └── plots.py
-├── scripts/
-│   └── original_analysis.py     # Original monolithic script
-├── notebooks/
-│   └── analysis_example.ipynb   # Jupyter notebook
-└── docs/
-    ├── _quarto.yml              # Quarto configuration
-    ├── index.qmd
-    ├── methodology.qmd
-    └── api_reference.qmd
+├── data/                      # Data storage (gitignored)
+│   ├── raw/                   # Raw API responses
+│   ├── processed/             # Cleaned and transformed data
+│   └── outputs/               # Generated visualizations
+├── src/                       # Source code
+│   ├── data_acquisition/      # API clients and data fetchers
+│   ├── processing/            # Data transformation pipelines
+│   ├── modeling/              # Prophet models and forecasting
+│   └── visualization/         # Plotting functions
+├── notebooks/                 # Analysis notebooks
+├── docs/                      # Quarto documentation
+├── tests/                     # Unit tests
+└── requirements.txt           # Python dependencies
 ```
 
-## Technical Stack
+## Quick Start
 
-**Core:**
+### Prerequisites
 - Python 3.8+
-- pandas, numpy, scipy
+- pip or conda
 
-**Time Series:**
-- Prophet (Meta's forecasting library)
+### Installation
 
-**Data Acquisition:**
-- requests
-- gdeltdoc
+```bash
+# Clone the repository
+git clone https://github.com/SarahFee/funding-displacement-media.git
+cd funding-displacement-media
 
-**Visualization:**
-- matplotlib
-- seaborn
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-**Documentation:**
-- Quarto
+# Install dependencies
+pip install -r requirements.txt
+```
 
-**Development:**
-- Git
-- pytest (testing)
-- black (formatting)
+### Running the Analysis
 
-## Main Findings
+```bash
+# Run the complete pipeline
+python src/main.py
+
+# Or run specific components
+python src/data_acquisition/fetch_fts.py
+python src/data_acquisition/fetch_dtm.py
+python src/data_acquisition/fetch_gdelt.py
+```
+
+### Generating Documentation
+
+```bash
+# Install Quarto: https://quarto.org/docs/get-started/
+quarto render docs/
+```
+
+## Methodology
+
+### Data Pipeline
+
+1. **Data Acquisition**: Fetching from three independent APIs
+2. **Temporal Alignment**: Normalizing to common date ranges (Feb 2022 - Feb 2024)
+3. **Time Series Modeling**: Prophet for funding forecasting with quarterly seasonality
+4. **Normalization**: MinMaxScaler for cross-series comparison
+5. **Aggregation**: Quarterly resolution for trend analysis
+6. **Correlation Analysis**: Pearson coefficients with significance testing
+
+### Statistical Approach
+
+- **Funding Data**: Log-transformed to stabilize variance, modeled with Prophet
+- **Displacement Data**: Quarterly aggregation across 44 countries
+- **Media Data**: Volume and tone metrics, quarterly averaged
+- **Normalization**: All series scaled to [0,1] for visual comparison
+- **Correlation**: Pearson correlation with p-value significance testing
+
+## Key Findings
 
 The analysis reveals:
+- Funding shows stronger correlation with media patterns than displacement trends
+- Media coverage volume and tone significantly influence funding allocation
+- High-profile crises receive disproportionate funding compared to displacement severity
+- Funding decisions lag behind media attention peaks
 
-- **Weak correlation** between funding and displacement (actual need)
-- **Moderate to strong correlation** between funding and media coverage
-- Funding lags behind media attention peaks
-- High-profile crises attract disproportionate resources
-
-**Implication**: Humanitarian funding is more responsive to visibility than to data-driven needs assessment.
-
-## Usage Scenarios
-
-### For Researchers
-- Extend analysis to additional countries
-- Test different time periods
-- Add new data sources
-- Develop predictive models
-
-### For Practitioners
-- Monitor funding gaps in real-time
-- Identify underfunded crises
-- Advocate for data-driven allocation
-- Demonstrate visibility bias
-
-### For Developers
-- Contribute new features
-- Improve API clients
-- Add visualization options
-- Enhance documentation
-
-
-## Contact
-
-**Author**: Sarah Fekih  
-**Role**: Data Scientist & AI Agents Engineer   
-
-**GitHub**: [funding-displacement-media](https://github.com/SarahFee/funding-displacement-media)
+For detailed findings, see the [Quarto documentation](docs/).
 
 ## Citation
+
+If you use this analysis in your research, please cite:
 
 ```bibtex
 @misc{fekih2025aiddata,
@@ -221,10 +132,32 @@ The analysis reveals:
   title = {When Aid Ignores Its Own Data},
   year = {2025},
   publisher = {GitHub},
-  url = {[https://github.com/SarahFee/funding-displacement-media](https://github.com/SarahFee/funding-displacement-media)}
+  url = {https://github.com/SarahFee/funding-displacement-media}
 }
 ```
 
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
 ## License
 
-MIT License - see LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- **OCHA** for maintaining the FTS API
+- **IOM** for the DTM data infrastructure
+- **GDELT Project** for comprehensive media monitoring
+- **Prophet** team at Meta for the forecasting library
+
+## Contact
+
+Sarah Fekih
+
+Project Link: [https://github.com/SarahFee/funding-displacement-media](https://github.com/SarahFee/funding-displacement-media)
+Blog Post: [When Aid Ignores Its Own Data](https://medium.com/@fekih.sarah/when-aid-ignores-its-own-data-f412eaf04633) - Medium article discussing the findings and implications
+
+---
+
+**Note**: This is a research project. Findings should be interpreted within the context of the methodology and limitations described in the documentation.
