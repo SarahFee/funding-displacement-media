@@ -1,0 +1,179 @@
+---
+title: "Humanitarian Funding Analysis"
+format:
+  html:
+    toc: false
+---
+
+# When Aid Funding Ignores Its Own Data
+
+## Overview
+
+This project investigates the relationship between humanitarian funding flows, displacement patterns, and media coverage from 2022-2024. The analysis reveals a critical disconnect: **funding correlates more strongly with media patterns than with actual displacement needs.**
+
+## Key Findings
+
+::: {.callout-important}
+## The Visibility Bias
+Humanitarian funding appears more responsive to media coverage than to displacement trends. High-profile crises (like Ukraine in 2022) attract disproportionate funding, while other crises with significant displacement remain chronically underfunded.
+:::
+
+### Correlation Results
+
+- **Funding ↔ Displacement**: Weak to moderate correlation
+- **Funding ↔ Media Volume**: Moderate to strong correlation
+- **Funding ↔ Media Tone**: Variable correlation
+- **Displacement ↔ Media**: Weak correlation
+
+These patterns suggest that **funding follows the news cycle rather than data-driven needs assessment**.
+
+## The Data-Action Gap
+
+Despite massive investments in humanitarian data infrastructure (FTS, DTM, HDX, ACLED), funding decisions don't primarily follow what the data shows about on-the-ground needs.
+
+### What This Means
+
+1. **Reactive, Not Proactive**: Funding spikes *after* media attention peaks
+2. **Forgotten Crises**: Low-visibility emergencies struggle for resources
+3. **Predictable Patterns**: The disconnect is systematic, not random
+
+## Why This Matters
+
+### The Anticipatory Action Paradox
+
+We invest in sophisticated models to predict floods, droughts, and mass displacements months ahead. We can see crises coming. But we've failed at predicting the one crisis that threatens all others: **funding collapse**.
+
+This is the **Anticipatory Action Paradox**: a system designed to act early, but still dependent on unpredictable donor cycles.
+
+## The Solution Space
+
+### 1. Funding Stress Index (FSI)
+
+Develop early warning systems for funding volatility:
+- Historical donor behavior patterns
+- Media attention metrics
+- Economic indicators
+- Political factors
+
+### 2. Parametric Funding Mechanisms
+
+Apply parametric insurance principles to humanitarian finance:
+- Pre-agreed funding triggers based on data thresholds
+- Automatic disbursement when indicators hit crisis levels
+- Decentralized liquidity pools as safety nets
+
+### 3. Data-Driven Advocacy
+
+Better align funding with needs through:
+- Real-time funding gap monitoring
+- Proactive visibility for underfunded crises
+- Evidence-based donor engagement
+
+## Project Structure
+
+This repository contains:
+
+- **📊 Data Pipelines**: Automated fetching from FTS, DTM, and GDELT APIs
+- **🔬 Analysis Code**: Prophet modeling, correlation analysis, normalization
+- **📈 Visualizations**: Time series plots showing funding-media-displacement relationships
+- **📚 Documentation**: Complete methodology and API reference
+
+## Getting Started
+
+::: {.panel-tabset}
+
+### Quick Start
+
+```bash
+# Clone and install
+git clone https://github.com/yourusername/humanitarian-funding-analysis.git
+cd humanitarian-funding-analysis
+pip install -r requirements.txt
+
+# Run analysis
+python src/main.py
+```
+
+### For Developers
+
+Explore the modular architecture:
+- `src/data_acquisition/`: API clients
+- `src/processing/`: Data transformation
+- `src/modeling/`: Statistical analysis
+- `src/visualization/`: Plotting functions
+
+### For Researchers
+
+Read the [Methodology](methodology.qmd) for:
+- Detailed analytical approach
+- Statistical methods
+- Limitations and assumptions
+- Future research directions
+
+:::
+
+## Data Sources
+
+### FTS (Financial Tracking Service)
+Global humanitarian funding flows tracked by OCHA. Transaction-level data from donor commitments to actual disbursements.
+
+### DTM (Displacement Tracking Matrix)
+IOM's comprehensive displacement monitoring across 44 crisis-affected countries. Periodic reporting on IDP numbers and locations.
+
+### GDELT (Global Database of Events, Language, and Tone)
+Real-time media monitoring capturing volume and sentiment of global news coverage.
+
+## Reproducibility
+
+All analysis is fully reproducible:
+
+- ✅ Open-source code (MIT License)
+- ✅ Public APIs (no proprietary data)
+- ✅ Documented methodology
+- ✅ Version-controlled pipeline
+
+## Next Steps
+
+### Research Applications
+
+- **PhD Research**: Foundation for Funding Stress Index development
+- **Policy Analysis**: Evidence base for funding reform advocacy
+- **Operational Tools**: Real-time monitoring for humanitarian organizations
+
+### Community Contributions
+
+We welcome:
+- Code improvements
+- Additional data sources
+- Extended analysis periods
+- Country-level deep dives
+
+See [Contributing Guidelines](https://github.com/yourusername/humanitarian-funding-analysis/blob/main/CONTRIBUTING.md)
+
+## Contact
+
+**Sarah Fekih**  
+Data Scientist & AI Agents Consultant  
+International Organization for Migration (IOM)
+
+- GitHub: [@yourusername](https://github.com/yourusername)
+- Project: [humanitarian-funding-analysis](https://github.com/yourusername/humanitarian-funding-analysis)
+
+## Citation
+
+```bibtex
+@misc{fekih2025humanitarian,
+  author = {Fekih, Sarah},
+  title = {Humanitarian Funding Analysis: Examining the Data-Action Gap},
+  year = {2025},
+  publisher = {GitHub},
+  url = {https://github.com/yourusername/humanitarian-funding-analysis}
+}
+```
+
+---
+
+::: {.callout-note}
+## About This Project
+This analysis is part of ongoing research into predictive models for humanitarian funding volatility and the application of parametric insurance mechanisms to humanitarian finance.
+:::

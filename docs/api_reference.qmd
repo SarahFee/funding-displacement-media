@@ -1,0 +1,446 @@
+---
+title: "API Reference"
+format:
+  html:
+    toc: true
+    code-fold: false
+---
+
+# Data Acquisition
+
+## FTS API Client
+
+### `fetch_funding_data(years, save_raw=True)`
+
+Fetches humanitarian funding flows from the OCHA Financial Tracking Service.
+
+**Parameters:**
+
+- `years` (list): List of years to fetch (e.g., `[2022, 2023, 2024]`)
+- `save_raw` (bool): Whether to save raw responses to `data/raw/fts/`
+
+**Returns:**
+
+- `pd.DataFrame`: Funding flow data with columns including:
+  - `id`: Flow identifier
+  - `amountUSD`: Funding amount in USD
+  - `createdAt`: Timestamp
+  - `sourceOrganization`: Donor details
+  - `destinationOrganization`: Recipient details
+
+**Example:**
+
+```python
+from src.data_acquisition import fetch_funding_data
+
+funding_df = fetch_funding_data([2022, 2023, 2024])
+print(f"Retrieved {len(funding_df)} funding records")
+```
+
+**API Endpoint:** `https://api.hpc.tools/v1/public/fts/flow?year={year}`
+
+---
+
+## DTM API Client
+
+### `fetch_displacement_data(country_list, save_raw=True)`
+
+Fetches internal displacement data from the IOM Displacement Tracking Matrix.
+
+**Parameters:**
+
+- `country_list` (list): ISO3 country codes (e.g., `["UKR", "SYR", "AFG"]`)
+- `save_raw` (bool): Whether to save raw responses to `data/raw/dtm/`
+
+**Returns:**
+
+- `pd.DataFrame`: Displacement data with columns including:
+  - `reportingDate`: Date of assessment
+  - `numPresentIdpInd`: Number of IDPs (individuals)
+  - `admin0Pcode`: Country code
+  - `admin0Name`: Country name
+
+**Example:**
+
+```python
+from src.data_acquisition import fetch_displacement_data
+
+countries = ["UKR", "SYR", "AFG", "SOM", "YEM"]
+displacement_df = fetch_displacement_data(countries)
+```
+
+**API Endpoint:** `https://dtmapi.iom.int/api/idpAdmin0Data/GetAdmin0Datav2`
+
+---
+
+## GDELT API Client
+
+### `fetch_gdelt_data(keyword, start_date, end_date, save_raw=True)`
+
+Fetches media coverage volume timeline from GDELT.
+
+**Parameters:**
+
+- `keyword` (str): Search keyword (e.g., `"Geopolitics"`, `"Humanitarian Crisis"`)
+- `start_date` (str): Start date in `YYYY-MM-DD` format
+- `end_date` (str): End date in `YYYY-MM-DD` format
+- `save_raw` (bool): Whether to save data to `data/raw/gdelt/`
+
+**Returns:**
+
+- `pd.DataFrame`: Two columns:
+  - Column 0: Date
+  - Column 1: Media volume intensity score
+
+**Example:**
+
+```python
+from src.data_acquisition import fetch_gdelt_data
+
+gdelt_df = fetch_gdelt_data(
+    keyword="Humanitarian Crisis",
+    start_date="2022-02-01",
+    end_date="2024-02-29"
+)
+```
+
+### `fetch_gdelt_tone(keyword, start_date, end_date, save_raw=True)`
+
+Fetches media tone/sentiment timeline from GDELT.
+
+**Parameters:** Same as `fetch_gdelt_data`
+
+**Returns:**
+
+- `pd.DataFrame`: Two columns:
+  - Column 0: Date
+  - Column 1: Tone score (-100 to +100)
+
+**Example:**
+
+```python
+from src.data_acquisition import fetch_gdelt_tone
+
+tone_df = fetch_gdelt_tone(
+    keyword="Geopolitics",
+    start_date="2022-02-01",
+    end_date="2024-02-29"
+)
+```
+
+---
+
+# Data Processing
+
+## Funding Processor
+
+### `process_funding_data(funding_df, start_date, end_date, save_processed=True)`
+
+Processes FTS data using Prophet time series modeling with quarterly seasonality.
+
+**Processing Steps:**
+
+1. Parse `createdAt` timestamps
+2. Aggregate to daily funding amounts
+3. Apply log transformation: `y = log(1 + amount)`
+4. Train Prophet model with quarterly seasonality (91.25 days)
+5. Generate forecast
+6. Filter to analysis period
+7. Normalize to [0,1] range
+
+**Parameters:**
+
+- `funding_df` (pd.DataFrame): Raw FTS data
+- `start_date` (str): Analysis start (default: `"2022-02-01"`)
+- `end_date` (str): Analysis end (default: `"2024-02-29"`)
+- `save_processed` (bool): Save to `data/processed/funding_processed.csv`
+
+**Returns:**
+
+- `pd.DataFrame`: Processed data with columns:
+  - `ds`: Date
+  - `yhat`: Prophet forecast (log-transformed)
+  - `yhat_norm`: Normalized forecast [0,1]
+
+**Example:**
+
+```python
+from src.processing import process_funding_data
+
+processed = process_funding_data(funding_df)
+```
+
+---
+
+## Displacement Processor
+
+### `process_displacement_data(displacement_df, start_date, end_date, save_processed=True)`
+
+Processes DTM data with quarterly aggregation.
+
+**Processing Steps:**
+
+1. Parse `reportingDate`
+2. Filter to analysis period
+3. Create quarterly periods
+4. Sum IDPs by quarter
+5. Convert to end-of-quarter timestamps
+6. Normalize to [0,1] range
+
+**Returns:**
+
+- `pd.DataFrame`: Quarterly data with columns:
+  - `quarter`: Period object
+  - `reportingDate`: Quarter-end timestamp
+  - `numPresentIdpInd`: Total IDPs
+  - `numPresentIdpInd_norm`: Normalized [0,1]
+
+**Example:**
+
+```python
+from src.processing import process_displacement_data
+
+quarterly_disp = process_displacement_data(displacement_df)
+```
+
+---
+
+## GDELT Processors
+
+### `process_gdelt_data(gdelt_df, start_date, end_date, save_processed=True)`
+
+Processes GDELT volume data with quarterly averaging.
+
+**Returns:**
+
+- `pd.DataFrame`: Quarterly data with columns:
+  - `ds`: Quarter-end date
+  - `volume_intensity`: Average volume
+  - `volume_intensity_norm`: Normalized [0,1]
+
+### `process_tone_data(tone_df, start_date, end_date, save_processed=True)`
+
+Processes GDELT tone data with quarterly averaging.
+
+**Returns:**
+
+- `pd.DataFrame`: Quarterly data with columns:
+  - `ds`: Quarter-end date
+  - `tone`: Average tone
+  - `tone_norm`: Normalized [0,1]
+
+---
+
+# Analysis & Modeling
+
+## Correlation Analysis
+
+### `run_correlation_analysis(funding_df, displacement_df, gdelt_volume_df, gdelt_tone_df, save_results=True)`
+
+Calculates Pearson correlations between time series.
+
+**Processing:**
+
+1. Align funding to quarterly resolution
+2. Find common quarters across all datasets
+3. Filter each dataset to common dates
+4. Calculate Pearson r and p-values
+
+**Returns:**
+
+- `dict`: Correlation results
+  - `fund_disp`: Funding ↔ Displacement correlation
+  - `fund_disp_p`: P-value
+  - `fund_vol`: Funding ↔ Media Volume correlation
+  - `fund_vol_p`: P-value
+  - `fund_tone`: Funding ↔ Media Tone correlation
+  - `fund_tone_p`: P-value
+  - `disp_vol`: Displacement ↔ Media Volume correlation
+  - `disp_vol_p`: P-value
+
+**Saves:**
+- `data/outputs/correlation_results.csv`
+- `data/outputs/correlation_report.txt`
+
+**Example:**
+
+```python
+from src.modeling import run_correlation_analysis
+
+results = run_correlation_analysis(
+    funding_df, 
+    displacement_df, 
+    volume_df, 
+    tone_df
+)
+
+print(f"Funding-Displacement r = {results['fund_disp']:.3f}")
+```
+
+---
+
+# Visualization
+
+## Plot Generator
+
+### `generate_all_visualizations(funding_df, displacement_df, gdelt_volume_df, gdelt_tone_df)`
+
+Generates all visualization plots.
+
+**Creates:**
+
+1. `funding_vs_displacement.png`: Funding vs. Displacement trends
+2. `funding_vs_media_volume.png`: Funding vs. Media Volume
+3. `displacement_vs_media.png`: Displacement vs. Media Volume
+4. `funding_vs_media_tone.png`: Funding vs. Media Sentiment
+
+**All plots:**
+- 14×7 inch size
+- 300 DPI resolution
+- Normalized [0,1] y-axis
+- Saved to `data/outputs/`
+
+**Example:**
+
+```python
+from src.visualization import generate_all_visualizations
+
+generate_all_visualizations(
+    funding_df,
+    displacement_df,
+    volume_df,
+    tone_df
+)
+```
+
+---
+
+# Complete Pipeline
+
+## Main Orchestrator
+
+### Running the Full Analysis
+
+```python
+from src.main import main
+
+# Run complete pipeline
+exit_code = main()
+```
+
+Or from command line:
+
+```bash
+python src/main.py
+```
+
+**Pipeline Stages:**
+
+1. **Data Acquisition**: Fetch from FTS, DTM, GDELT
+2. **Data Processing**: Prophet modeling, quarterly aggregation, normalization
+3. **Correlation Analysis**: Calculate Pearson coefficients
+4. **Visualization**: Generate all plots
+5. **Results Summary**: Log key findings
+
+**Outputs:**
+
+- `data/raw/`: API responses
+- `data/processed/`: Cleaned datasets
+- `data/outputs/`: Visualizations and correlation results
+
+---
+
+# Configuration
+
+## Default Parameters
+
+```python
+# Analysis period
+START_DATE = "2022-02-01"
+END_DATE = "2024-02-29"
+
+# FTS years
+YEARS = [2022, 2023, 2024]
+
+# GDELT keyword
+GDELT_KEYWORD = "Geopolitics"
+
+# DTM countries (44 countries)
+COUNTRY_LIST = [
+    "LBY", "AFG", "PER", "NER", "CAF", "ZMB", "SOM", # ... 
+]
+```
+
+## Customization
+
+Override defaults by modifying `src/main.py` or creating config files:
+
+```python
+# Custom date range
+funding_df = process_funding_data(
+    raw_df,
+    start_date="2020-01-01",
+    end_date="2023-12-31"
+)
+
+# Different GDELT keyword
+gdelt_df = fetch_gdelt_data(
+    keyword="Refugee Crisis",
+    start_date=START_DATE,
+    end_date=END_DATE
+)
+```
+
+---
+
+# Error Handling
+
+All functions include error handling and logging:
+
+```python
+import logging
+
+logger = logging.getLogger(__name__)
+
+try:
+    data = fetch_funding_data([2022, 2023, 2024])
+except Exception as e:
+    logger.error(f"Failed to fetch FTS data: {e}")
+    raise
+```
+
+**Common Issues:**
+
+- **Network timeouts**: Retry with exponential backoff
+- **Missing data**: Functions return empty DataFrames, logged as warnings
+- **Invalid dates**: Pandas coerces with `errors="coerce"`, drops NaT values
+
+---
+
+# Dependencies
+
+```python
+# Core
+import pandas as pd
+import numpy as np
+import requests
+
+# Time series
+from prophet import Prophet
+
+# Statistics
+from scipy.stats import pearsonr
+from sklearn.preprocessing import MinMaxScaler
+
+# Visualization
+import matplotlib.pyplot as plt
+
+# GDELT
+from gdeltdoc import GdeltDoc, Filters
+```
+
+Install all:
+
+```bash
+pip install -r requirements.txt
+```

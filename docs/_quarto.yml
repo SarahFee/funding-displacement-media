@@ -1,0 +1,32 @@
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "Humanitarian Funding Analysis"
+  navbar:
+    left:
+      - text: "Home"
+        file: index.qmd
+      - text: "Methodology"
+        file: methodology.qmd
+      - text: "API Reference"
+        file: api_reference.qmd
+    right:
+      - icon: github
+        href: https://github.com/yourusername/humanitarian-funding-analysis
+  sidebar:
+    style: "docked"
+    contents:
+      - section: "Documentation"
+        contents:
+          - index.qmd
+          - methodology.qmd
+          - api_reference.qmd
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    code-fold: true
+    code-summary: "Show code"

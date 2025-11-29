@@ -1,0 +1,372 @@
+---
+title: "Humanitarian Funding Analysis"
+subtitle: "Examining the Data-Action Gap in Crisis Response"
+author: "Sarah Fekih"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    code-summary: "Show code"
+    theme: cosmo
+    fig-width: 10
+    fig-height: 6
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+# Overview
+
+This analysis investigates whether humanitarian funding follows actual displacement needs or is driven by media visibility patterns. Using three major data sources (FTS, DTM, and GDELT), we examine correlations between funding flows, displacement trends, and media coverage from February 2022 to February 2024.
+
+## Research Questions
+
+1. Does humanitarian funding correlate with displacement trends?
+2. How does media coverage influence funding allocation?
+3. Can we identify a "visibility bias" in humanitarian response?
+
+# Data Sources
+
+## 1. FTS (Financial Tracking Service)
+
+- **Provider**: OCHA (United Nations Office for the Coordination of Humanitarian Affairs)
+- **Content**: Global humanitarian funding flows
+- **API Endpoint**: `https://api.hpc.tools/v1/public/fts/flow`
+- **Granularity**: Transaction-level data with daily timestamps
+- **Coverage**: 2022-2024
+
+### Data Structure
+
+```python
+# Example FTS data fields
+{
+  "id": 12345,
+  "amountUSD": 1000000,
+  "createdAt": "2022-03-15T10:30:00Z",
+  "sourceOrganization": {...},
+  "destinationOrganization": {...},
+  "flowType": "commitment"
+}
+```
+
+## 2. DTM (Displacement Tracking Matrix)
+
+- **Provider**: IOM (International Organization for Migration)
+- **Content**: Internal displacement data across 44 crisis-affected countries
+- **API Endpoint**: `https://dtmapi.iom.int/api/idpAdmin0Data/GetAdmin0Datav2`
+- **Granularity**: Periodic reporting (monthly to quarterly)
+- **Coverage**: Global displacement hotspots
+
+### Covered Countries
+
+```{python}
+#| code-fold: false
+countries = [
+    "LBY", "AFG", "PER", "NER", "CAF", "ZMB", "SOM", "VCT", "BEN", "GTM", "MNG",
+    "SLV", "KEN", "YEM", "PAK", "DMA", "DJI", "HND", "ARM", "PNG", "BFA", "VUT",
+    "COD", "ECU", "SDN", "TCD", "HTI", "ZAF", "UKR", "ZWE", "CMR", "BOL", "ETH",
+    "MWI", "BDI", "IRQ", "MOZ", "MDG", "GRD", "SSD", "NGA", "LBN", "FJI", "MLI",
+    "UGA"
+]
+print(f"Total countries: {len(countries)}")
+```
+
+## 3. GDELT (Global Database of Events, Language, and Tone)
+
+- **Provider**: GDELT Project
+- **Content**: Media coverage volume and sentiment analysis
+- **API**: GDELT DOC 2.0 API via `gdeltdoc` Python library
+- **Granularity**: Daily time-series data
+- **Coverage**: Global news monitoring
+
+### Metrics Collected
+
+- **Volume**: Article count intensity over time
+- **Tone**: Sentiment score (-100 to +100, where negative is more negative coverage)
+
+# Methodology
+
+## Data Pipeline Architecture
+
+```{mermaid}
+graph TB
+    A[FTS API] --> D[Raw Data Storage]
+    B[DTM API] --> D
+    C[GDELT API] --> D
+    D --> E[Data Cleaning]
+    E --> F[Temporal Alignment]
+    F --> G[Prophet Modeling - Funding]
+    F --> H[Quarterly Aggregation - Displacement]
+    F --> I[Quarterly Aggregation - Media]
+    G --> J[Normalization]
+    H --> J
+    I --> J
+    J --> K[Correlation Analysis]
+    J --> L[Visualization]
+    K --> M[Results & Insights]
+    L --> M
+```
+
+## Processing Steps
+
+### 1. Data Acquisition
+
+Each data source requires different fetching strategies:
+
+**FTS**: Year-based batch requests
+```python
+url = f"https://api.hpc.tools/v1/public/fts/flow?year={year}"
+response = requests.get(url)
+flows = response.json()["data"]["flows"]
+```
+
+**DTM**: Country-by-country iteration
+```python
+for country in country_list:
+    params = {"Admin0Pcode": country}
+    response = requests.get(dtm_url, params=params)
+    data.extend(response.json()["result"])
+```
+
+**GDELT**: Keyword-based timeline search
+```python
+from gdeltdoc import GdeltDoc, Filters
+
+gd = GdeltDoc()
+f = Filters(keyword="Geopolitics", 
+            start_date="2022-02-01",
+            end_date="2024-02-29")
+timeline = gd.timeline_search("timelinevol", f)
+```
+
+### 2. Data Processing
+
+#### Funding Data: Prophet Modeling
+
+**Rationale**: Funding data exhibits quarterly patterns due to budget cycles and pledge schedules. Prophet captures this seasonality effectively.
+
+**Steps**:
+1. Aggregate daily funding amounts
+2. Apply log transformation: `y = log(1 + amount)` to stabilize variance
+3. Train Prophet model with quarterly seasonality (91.25-day period)
+4. Generate forecast for analysis period
+5. Normalize to [0,1] range using MinMaxScaler
+
+```python
+from prophet import Prophet
+
+model = Prophet(yearly_seasonality=False, 
+                weekly_seasonality=False)
+model.add_seasonality(name="quarterly", 
+                      period=91.25, 
+                      fourier_order=5)
+model.fit(funding_by_date)
+forecast = model.predict(...)
+```
+
+**Why log transformation?**
+- Funding amounts span multiple orders of magnitude
+- Log transform reduces impact of extreme outliers
+- Stabilizes variance for better model performance
+
+#### Displacement Data: Quarterly Aggregation
+
+**Rationale**: DTM reporting is irregular across countries. Quarterly aggregation creates consistent time periods for comparison.
+
+**Steps**:
+1. Parse reporting dates
+2. Filter to analysis period (2022-02-01 to 2024-02-29)
+3. Group by quarter and sum IDPs
+4. Convert quarters to end-of-quarter timestamps
+5. Normalize to [0,1] range
+
+```python
+displacement_df["quarter"] = displacement_df["reportingDate"].dt.to_period("Q")
+aggregated = displacement_df.groupby("quarter")["numPresentIdpInd"].sum()
+```
+
+#### Media Data: Quarterly Averaging
+
+**Rationale**: GDELT provides daily data, but quarterly averages smooth noise and align with other datasets.
+
+**Steps**:
+1. Parse dates and filter to period
+2. Resample to quarter-end frequency
+3. Calculate mean volume and tone per quarter
+4. Normalize to [0,1] range
+
+```python
+quarterly = gdelt_df.set_index("ds").resample("QE").mean()
+```
+
+### 3. Normalization Strategy
+
+All time series are normalized using MinMaxScaler to enable visual comparison:
+
+$$\text{normalized} = \frac{x - \min(x)}{\max(x) - \min(x)}$$
+
+This transforms all values to [0,1] range where:
+- 0 = minimum value in the series
+- 1 = maximum value in the series
+
+**Rationale**: Different scales (millions of dollars vs. IDP counts vs. media intensity scores) make direct comparison impossible. Normalization preserves trends while enabling visual overlay.
+
+### 4. Correlation Analysis
+
+Pearson correlation coefficients measure linear relationships between normalized time series:
+
+$$r = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum (x_i - \bar{x})^2 \sum (y_i - \bar{y})^2}}$$
+
+**Interpretation**:
+- |r| < 0.3: Weak correlation
+- 0.3 ≤ |r| < 0.7: Moderate correlation
+- |r| ≥ 0.7: Strong correlation
+
+**P-values** indicate statistical significance (p < 0.05 suggests non-random relationship).
+
+# Analysis Period
+
+**Date Range**: February 2022 – February 2024 (24 months, 8 quarters)
+
+**Rationale**: 
+- Captures Ukraine crisis impact (Feb 2022 onset)
+- Sufficient temporal span for quarterly analysis
+- Recent enough for policy relevance
+- Limited by GDELT API constraints and DTM data availability
+
+# Technical Implementation
+
+## Dependencies
+
+```python
+# Core data processing
+import pandas as pd
+import numpy as np
+from scipy.stats import pearsonr
+
+# Time series modeling
+from prophet import Prophet
+
+# Data normalization
+from sklearn.preprocessing import MinMaxScaler
+
+# Data acquisition
+import requests
+from gdeltdoc import GdeltDoc, Filters
+
+# Visualization
+import matplotlib.pyplot as plt
+import seaborn as sns
+```
+
+## Directory Structure
+
+```
+humanitarian-funding-analysis/
+├── data/
+│   ├── raw/              # Raw API responses
+│   ├── processed/        # Cleaned data
+│   └── outputs/          # Visualizations & results
+├── src/
+│   ├── data_acquisition/ # API fetchers
+│   ├── processing/       # Data transformers
+│   ├── modeling/         # Correlation analysis
+│   └── visualization/    # Plotting functions
+└── docs/                 # This documentation
+```
+
+# Limitations
+
+## Data Limitations
+
+1. **Temporal Coverage**: 2-year window is relatively short for robust trend analysis
+2. **DTM Reporting**: Irregular reporting schedules across countries may introduce bias
+3. **GDELT Keyword**: "Geopolitics" is broad; crisis-specific keywords might yield different results
+4. **FTS Completeness**: Not all humanitarian funding is tracked through FTS
+
+## Analytical Limitations
+
+1. **Correlation ≠ Causation**: Observed correlations don't prove causal relationships
+2. **Aggregation Effects**: Quarterly aggregation may obscure important sub-period dynamics
+3. **Normalization**: MinMaxScaler is sensitive to outliers
+4. **Country-Level Heterogeneity**: Global aggregation masks country-specific patterns
+
+## Scope Limitations
+
+1. **Missing Factors**: Analysis doesn't account for political economy, donor fatigue, economic conditions
+2. **Media Bias**: GDELT reflects English-language news; may not capture all regional coverage
+3. **Displacement Types**: DTM focuses on internal displacement; doesn't include refugees or asylum seekers
+
+# Future Directions
+
+## Methodological Extensions
+
+1. **Country-Level Analysis**: Disaggregate to specific crisis contexts
+2. **Keyword Sensitivity**: Test multiple GDELT search terms
+3. **Lag Analysis**: Investigate time delays between media spikes and funding responses
+4. **Multivariate Modeling**: Include economic indicators, political events, donor fatigue metrics
+
+## Research Questions
+
+1. Can we develop a **Funding Stress Index** predicting volatility?
+2. How do different crisis types (natural disasters vs. conflict) affect funding-media relationships?
+3. What role do social media patterns play alongside traditional news coverage?
+4. Can machine learning predict funding shortfalls before they occur?
+
+## Data Enhancements
+
+1. **Longer Time Series**: Extend to 5-10 years for robust trend detection
+2. **Additional Sources**: Integrate ACLED (conflict data), ReliefWeb, HDX indicators
+3. **Real-Time Monitoring**: Build automated pipeline for continuous analysis
+4. **Donor-Level Analysis**: Examine individual donor behavior patterns
+
+# Reproducibility
+
+## Running the Analysis
+
+```bash
+# Clone repository
+git clone https://github.com/yourusername/humanitarian-funding-analysis.git
+cd humanitarian-funding-analysis
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run complete pipeline
+python src/main.py
+
+# Generate this documentation
+quarto render docs/methodology.qmd
+```
+
+## Code Availability
+
+All code is open-source under MIT License:
+- **GitHub**: [humanitarian-funding-analysis](https://github.com/yourusername/humanitarian-funding-analysis)
+- **Documentation**: [Quarto website](https://yourusername.github.io/humanitarian-funding-analysis)
+
+# References
+
+1. **FTS**: [https://fts.unocha.org/](https://fts.unocha.org/)
+2. **DTM**: [https://dtm.iom.int/](https://dtm.iom.int/)
+3. **GDELT**: [https://www.gdeltproject.org/](https://www.gdeltproject.org/)
+4. **Prophet**: Taylor, S.J., & Letham, B. (2018). Forecasting at scale. *The American Statistician*, 72(1), 37-45.
+
+# Citation
+
+```bibtex
+@misc{fekih2025humanitarian,
+  author = {Fekih, Sarah},
+  title = {Humanitarian Funding Analysis: Examining the Data-Action Gap},
+  year = {2025},
+  publisher = {GitHub},
+  url = {https://github.com/yourusername/humanitarian-funding-analysis}
+}
+```
+
+---
+
+*This analysis was conducted as part of research into predictive models for humanitarian funding volatility. For questions or collaborations, please open an issue on GitHub.*
