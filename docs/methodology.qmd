@@ -1,6 +1,5 @@
 ---
-title: "Humanitarian Funding Analysis"
-subtitle: "Examining the Data-Action Gap in Crisis Response"
+title: "Funding, displacement , Media Analysis"
 author: "Sarah Fekih"
 date: today
 format:
