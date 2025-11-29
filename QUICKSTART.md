@@ -1,6 +1,7 @@
-# Quick Start Guide
+#  Overview
+This repository contains the analytical pipeline and methodology for investigating whether humanitarian funding follows actual displacement needs or is driven by media visibility patterns.
 
-##  Getting Started in 5 Minutes
+# Quick Start
 
 ### Step 1: Run Setup
 
