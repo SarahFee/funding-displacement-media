@@ -1,16 +1,8 @@
 # Quick Start Guide
 
-## 🚀 Getting Started in 5 Minutes
+##  Getting Started in 5 Minutes
 
-### Step 1: Extract the Repository
-
-```bash
-# Extract the archive
-tar -xzf humanitarian-funding-analysis.tar.gz
-cd humanitarian-funding-analysis
-```
-
-### Step 2: Run Setup
+### Step 1: Run Setup
 
 ```bash
 # Make setup script executable (if not already)
@@ -25,7 +17,7 @@ This will:
 - Install all dependencies
 - Create directory structure
 
-### Step 3: Run the Analysis
+### Step 2: Run the Analysis
 
 ```bash
 # Activate virtual environment (if not already active)
@@ -42,7 +34,7 @@ The pipeline will:
 4. Generate visualizations
 5. Save results to `data/outputs/`
 
-## 📊 View Results
+## View Results
 
 After running the analysis, check:
 
@@ -50,19 +42,8 @@ After running the analysis, check:
 - **Correlation Results**: `data/outputs/correlation_results.csv`
 - **Detailed Report**: `data/outputs/correlation_report.txt`
 
-## 📚 Generate Documentation
 
-```bash
-# Install Quarto first: https://quarto.org/docs/get-started/
-
-# Render documentation
-quarto render docs/
-
-# View locally
-quarto preview docs/
-```
-
-## 🔧 Customize the Analysis
+## Customize the Analysis
 
 ### Change Date Range
 
@@ -88,14 +69,7 @@ COUNTRY_LIST = [
 ]
 ```
 
-## 🐛 Troubleshooting
-
-### API Connection Issues
-
-If you get network errors:
-- Check internet connection
-- Some APIs may have rate limits
-- Try again later or reduce batch sizes
+## Troubleshooting
 
 ### Missing Dependencies
 
@@ -118,15 +92,8 @@ sudo apt-get install python3-dev
 pip install prophet
 ```
 
-## 📖 Next Steps
 
-1. **Read the methodology**: `docs/methodology.qmd`
-2. **Explore the API**: `docs/api_reference.qmd`
-3. **Run the notebook**: `jupyter notebook notebooks/analysis_example.ipynb`
-4. **Customize visualizations**: Edit `src/visualization/plots.py`
-5. **Add new data sources**: Create new fetchers in `src/data_acquisition/`
-
-## 🤝 Contributing
+## Contributing
 
 See `CONTRIBUTING.md` for guidelines on:
 - Code style
@@ -134,13 +101,8 @@ See `CONTRIBUTING.md` for guidelines on:
 - Pull requests
 - Areas for contribution
 
-## 📧 Need Help?
 
-- Open an issue on GitHub
-- Check the documentation
-- Review the PROJECT_SUMMARY.md
-
-## 🎯 Common Tasks
+## Common Tasks
 
 ### Just want to see the analysis?
 
@@ -167,13 +129,4 @@ Edit `src/visualization/plots.py` and customize:
 - Plot types
 - Labels and titles
 
-## ⚡ Pro Tips
 
-1. **Cache API responses**: Raw data is saved to `data/raw/` automatically
-2. **Skip fetching**: Use cached data by commenting out fetch calls in `main.py`
-3. **Parallel processing**: Modify DTM fetcher to use concurrent requests
-4. **Custom analysis**: Create new notebooks in `notebooks/` directory
-
----
-
-Happy analyzing! 🎉
