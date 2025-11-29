@@ -296,32 +296,9 @@ humanitarian-funding-analysis/
 
 ## Scope Limitations
 
-1. **Missing Factors**: Analysis doesn't account for political economy, donor fatigue, economic conditions
-2. **Media Bias**: GDELT reflects English-language news; may not capture all regional coverage
-3. **Displacement Types**: DTM focuses on internal displacement; doesn't include refugees or asylum seekers
+1. **Media Bias**: GDELT reflects English-language news; may not capture all regional coverage
+2. **Displacement Types**: DTM focuses on internal displacement; doesn't include refugees or asylum seekers
 
-# Future Directions
-
-## Methodological Extensions
-
-1. **Country-Level Analysis**: Disaggregate to specific crisis contexts
-2. **Keyword Sensitivity**: Test multiple GDELT search terms
-3. **Lag Analysis**: Investigate time delays between media spikes and funding responses
-4. **Multivariate Modeling**: Include economic indicators, political events, donor fatigue metrics
-
-## Research Questions
-
-1. Can we develop a **Funding Stress Index** predicting volatility?
-2. How do different crisis types (natural disasters vs. conflict) affect funding-media relationships?
-3. What role do social media patterns play alongside traditional news coverage?
-4. Can machine learning predict funding shortfalls before they occur?
-
-## Data Enhancements
-
-1. **Longer Time Series**: Extend to 5-10 years for robust trend detection
-2. **Additional Sources**: Integrate ACLED (conflict data), ReliefWeb, HDX indicators
-3. **Real-Time Monitoring**: Build automated pipeline for continuous analysis
-4. **Donor-Level Analysis**: Examine individual donor behavior patterns
 
 # Reproducibility
 
@@ -345,8 +322,8 @@ quarto render docs/methodology.qmd
 ## Code Availability
 
 All code is open-source under MIT License:
-- **GitHub**: [humanitarian-funding-analysis](https://github.com/yourusername/humanitarian-funding-analysis)
-- **Documentation**: [Quarto website](https://yourusername.github.io/humanitarian-funding-analysis)
+- **GitHub**: [funding-displacement-media](https://github.com/SarahFee/funding-displacement-media)
+- **Documentation**: [Quarto website](https://SarahFee.github.io/funding-displacement-media)
 
 # References
 
@@ -358,12 +335,12 @@ All code is open-source under MIT License:
 # Citation
 
 ```bibtex
-@misc{fekih2025humanitarian,
+@misc{fekih2025aiddata,
   author = {Fekih, Sarah},
-  title = {Humanitarian Funding Analysis: Examining the Data-Action Gap},
+  title = {When Aid Ignores Its Own Data},
   year = {2025},
   publisher = {GitHub},
-  url = {https://github.com/yourusername/humanitarian-funding-analysis}
+  url = {https://github.com/SarahFee/funding-displacement-media}
 }
 ```
 
