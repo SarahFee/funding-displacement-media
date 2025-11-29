@@ -1,4 +1,4 @@
-# Funding, displacement and media andalysis Pipeline
+# Funding, displacement and media analysis Pipeline
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
