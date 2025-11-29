@@ -174,40 +174,6 @@ humanitarian-funding-analysis/
 - pytest (testing)
 - black (formatting)
 
-## Key Features
-
-### Modularity
-- Each component is independently testable
-- Easy to swap data sources
-- Extensible architecture
-
-### Reproducibility
-- Complete pipeline automation
-- Version-controlled code
-- Documented methodology
-- Public APIs only
-
-### Documentation
-- Comprehensive Quarto website
-- API reference with examples
-- Inline code comments
-- Docstrings for all functions
-
-### Professional Quality
-- Publication-ready visualizations
-- Statistical rigor (p-values, correlation coefficients)
-- Error handling and logging
-- Clean code structure
-
-## Research Context
-
-This project supports research into:
-
-1. **Funding Stress Index (FSI)**: Predicting humanitarian funding volatility
-2. **Parametric Insurance**: Applying insurance mechanisms to humanitarian finance
-3. **Data-Driven Advocacy**: Evidence-based donor engagement
-4. **Media-Funding Dynamics**: Understanding visibility bias in crisis response
-
 ## Main Findings
 
 The analysis reveals:
@@ -239,43 +205,23 @@ The analysis reveals:
 - Add visualization options
 - Enhance documentation
 
-## Next Steps
-
-### Immediate
-1. Publish to GitHub
-2. Deploy Quarto documentation
-3. Add unit tests
-4. Create Docker container
-
-### Short-term
-1. Country-level analysis
-2. Different GDELT keywords
-3. Lag correlation analysis
-4. Interactive dashboards
-
-### Long-term
-1. Real-time monitoring system
-2. Predictive funding models
-3. Integration with operational tools
-4. Multi-year analysis (5-10 years)
 
 ## Contact
 
 **Author**: Sarah Fekih  
-**Role**: Data Scientist & AI Agents Consultant  
-**Organization**: International Organization for Migration (IOM)
+**Role**: Data Scientist & AI Agents Engineer   
 
-**GitHub**: [humanitarian-funding-analysis](https://github.com/yourusername/humanitarian-funding-analysis)
+**GitHub**: [funding-displacement-media](https://github.com/SarahFee/funding-displacement-media)
 
 ## Citation
 
 ```bibtex
-@misc{fekih2025humanitarian,
+@misc{fekih2025aiddata,
   author = {Fekih, Sarah},
-  title = {Humanitarian Funding Analysis: Examining the Data-Action Gap},
+  title = {When Aid Ignores Its Own Data},
   year = {2025},
   publisher = {GitHub},
-  url = {https://github.com/yourusername/humanitarian-funding-analysis}
+  url = {[https://github.com/SarahFee/funding-displacement-media](https://github.com/SarahFee/funding-displacement-media)}
 }
 ```
 
