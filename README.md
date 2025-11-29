@@ -5,7 +5,7 @@
 
 A data-driven analysis examining the relationship between humanitarian funding flows, displacement patterns, and media coverage (2022-2024).
 
-## 🎯 Project Overview
+## Project Overview
 
 This repository contains the analytical pipeline and methodology for investigating whether humanitarian funding follows actual displacement needs or is driven by media visibility patterns.
 
@@ -14,7 +14,7 @@ This repository contains the analytical pipeline and methodology for investigati
 - How does media coverage influence funding allocation?
 - Can we identify the "visibility bias" in humanitarian response?
 
-## 📊 Datasets
+## Datasets
 
 ### 1. FTS (Financial Tracking Service)
 - **Source**: [OCHA FTS API](https://fts.unocha.org/)
@@ -34,7 +34,7 @@ This repository contains the analytical pipeline and methodology for investigati
 - **Coverage**: Global news articles
 - **Granularity**: Daily time-series data
 
-## 🏗️ Repository Structure
+## Repository Structure
 
 ```
 humanitarian-funding-analysis/
@@ -53,7 +53,7 @@ humanitarian-funding-analysis/
 └── requirements.txt           # Python dependencies
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Python 3.8+
@@ -93,7 +93,7 @@ python src/data_acquisition/fetch_gdelt.py
 quarto render docs/
 ```
 
-## 📈 Methodology
+## Methodology
 
 ### Data Pipeline
 
@@ -112,7 +112,7 @@ quarto render docs/
 - **Normalization**: All series scaled to [0,1] for visual comparison
 - **Correlation**: Pearson correlation with p-value significance testing
 
-## 🔍 Key Findings
+## Key Findings
 
 The analysis reveals:
 - Funding shows stronger correlation with media patterns than displacement trends
@@ -122,7 +122,7 @@ The analysis reveals:
 
 For detailed findings, see the [Quarto documentation](docs/).
 
-## 📝 Citation
+## Citation
 
 If you use this analysis in your research, please cite:
 
@@ -136,26 +136,27 @@ If you use this analysis in your research, please cite:
 }
 ```
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - **OCHA** for maintaining the FTS API
 - **IOM** for the DTM data infrastructure
 - **GDELT Project** for comprehensive media monitoring
 - **Prophet** team at Meta for the forecasting library
 
-## 📧 Contact
+## Contact
 
 Sarah Fekih
 
-Project Link: [https://github.com/yourusername/humanitarian-funding-analysis](https://github.com/yourusername/humanitarian-funding-analysis)
+Project Link: [https://github.com/SarahFee/funding-displacement](https://github.com/SarahFee/funding-displacement)
+Blog Post: [When Aid Ignores Its Own Data](https://medium.com/@fekih.sarah/when-aid-ignores-its-own-data-f412eaf04633) - Medium article discussing the findings and implications
 
 ---
 
